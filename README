@@ -1,0 +1,27 @@
+
+An Erlang NIF interface to the libnotify library. libnotify is used to
+send desktop notification bubbles.
+
+HOW TO BUILD IT
+
+make
+
+HOW TO USE IT
+
+osd(Options) -> ok | enomem
+    Types   Options = [Opt]
+            Opt = [{summary, string()}, {body, string()}, {icon, string()},
+                    {category, string()}, {urgency, int()}, {timeout, int()}]
+
+
+EXAMPLES
+
+> notify:osd([]).
+> notify:osd([{summary, "hello"}, {body, "world"}]).
+
+> rss:start().
+
+TODO
+
+* support growl on Mac OS X
+
