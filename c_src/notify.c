@@ -144,9 +144,6 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
         ERL_NIF_TERM value = atom_undefined;
 
 
-        if (!enif_is_tuple(env, head) && !enif_is_list(env, head))
-            goto NEXT;
-
         if (enif_get_tuple(env, head, &arity, &array)) {
             switch (arity) {
                 case 2:
@@ -157,13 +154,14 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
                     goto NEXT;
             }
         }
-        else {
+        else if (enif_is_list(env, head)) {
             arity = 0;
             key = head;
         }
-
-        if (notify_hints_type(env, notify, arity, key, value) < 0)
+        else
             goto NEXT;
+
+        (void)notify_hints_type(env, notify, arity, key, value);
 
 
 NEXT:
@@ -203,7 +201,7 @@ notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF
     else if (enif_get_double(env, value, &d_value))
         notify_notification_set_hint_double(notify, s_key, (value == atom_undefined ? 0 : d_value));
     else if (enif_get_int(env, value, &i_value))
-        notify_notification_set_hint_byte(notify, s_key, ( ( (value == atom_undefined) || (value >= 1 << 8)) ? 0 : i_value));
+        notify_notification_set_hint_byte(notify, s_key, (value == atom_undefined ? 0 : (u_int8_t)i_value));
     else if ((arity == 0) || enif_get_string(env, value, s_value, sizeof(s_value), ERL_NIF_LATIN1))
         notify_notification_set_hint_string(notify, s_key, (value == atom_undefined ? "" : s_value));
     else
