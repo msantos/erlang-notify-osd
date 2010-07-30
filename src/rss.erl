@@ -31,7 +31,7 @@
 -module(rss).
 -include_lib("xmerl/include/xmerl.hrl").
 
--export([start/0, parse/1]).
+-export([start/0, start/1, parse/1]).
 
 -record(state, {
         feed,           % URL
@@ -41,8 +41,10 @@
 
 
 start() ->
+    start("rss.cfg").
+start(Cfg) ->
     inets:start(),
-    State = parse(notify:privdir("rss.cfg")),
+    State = parse(notify:privdir(Cfg)),
     spawn(fun() -> loop(State, []) end).
 
 loop(#state{feed = Feed, poll = Poll, number = N} = State, Digest) ->

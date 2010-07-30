@@ -11,13 +11,22 @@ HOW TO USE IT
 osd(Options) -> ok | enomem
     Types   Options = [Opt]
             Opt = [{summary, string()}, {body, string()}, {icon, string()},
-                    {category, string()}, {urgency, int()}, {timeout, int()}]
+                    {category, string()}, {urgency, int()}, {timeout, int()},
+                    Hints]
+            Hints = [string() | {string, Value}]
+            Value = [string() | integer() | byte() | double()]
+
 
 
 EXAMPLES
 
 > notify:osd([]).
 > notify:osd([{summary, "hello"}, {body, "world"}]).
+
+> notify:osd([{icon, "notification-audio-volume-medium"},
+        {hints, [{"value", 75}, "x-canonical-private-synchronous"]},
+        {summary, "Volume"},
+        {body, ""}]).
 
 > rss:start().
 

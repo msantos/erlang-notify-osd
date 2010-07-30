@@ -33,7 +33,7 @@
 -export([
         osd/1, urgency/1,
         privdir/1,
-        notify/6
+        notify/7
     ]).
 
 -define(NOTIFY_NAME, "erlang-notify").
@@ -51,7 +51,7 @@
 on_load() ->
     erlang:load_nif(niflib(), ?NOTIFY_NAME).
 
-notify(_,_,_,_,_,_) ->
+notify(_,_,_,_,_,_,_) ->
     erlang:error(not_implemented).
 
 osd(Opt) when is_list(Opt) ->
@@ -61,8 +61,9 @@ osd(Opt) when is_list(Opt) ->
     Category = proplists:get_value(category, Opt, ?NOTIFY_CATEGORY),
     Urgency = proplists:get_value(urgency, Opt, ?NOTIFY_URGENCY),
     Timeout = proplists:get_value(timeout, Opt, ?NOTIFY_TIMEOUT),
+    Hints = proplists:get_value(hints, Opt, []),
 
-    notify(Summary, Body, Icon, Category, Urgency, Timeout).
+    notify(Summary, Body, Icon, Category, Urgency, Timeout, Hints).
 
 urgency(low) -> 0;
 urgency(normal) -> 1;

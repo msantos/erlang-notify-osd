@@ -21,7 +21,7 @@ LIB=-pthread -D_REENTRANT -I/usr/include/gtk-2.0 -I/usr/lib/gtk-2.0/include -I/u
 all: dir erl nif
 
 dir:
-	-@mkdir -p priv/tmp ebin
+	-@mkdir -p ebin
 
 erl:
 	@$(ERL) -noinput +B \
