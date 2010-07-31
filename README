@@ -13,9 +13,9 @@ osd(Options) -> ok | enomem
             Opt = [{summary, string()}, {body, string()}, {icon, string()},
                     {category, string()}, {urgency, int()}, {timeout, int()},
                     Hints]
-            Hints = [string() | {string, Value}]
-            Value = [string() | integer() | byte() | double()]
-
+            Hints = [string() | {string(), Value}]
+            Value = [string() | integer() | double() | Byte]
+            Byte = {byte, uchar()}
 
 
 EXAMPLES
