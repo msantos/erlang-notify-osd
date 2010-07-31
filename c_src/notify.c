@@ -151,20 +151,24 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
                     key = array[0];
                     break;
                 default:
-                    goto NEXT;
+                    rv = enif_make_badarg(env);
+                    goto ERR;
             }
         }
         else if (enif_is_list(env, head)) {
             arity = 0;
             key = head;
         }
-        else
-            goto NEXT;
+        else {
+            rv = enif_make_badarg(env);
+            goto ERR;
+        }
 
-        (void)notify_hints_type(env, notify, arity, key, value);
+        if (notify_hints_type(env, notify, arity, key, value) < 0) {
+            rv = enif_make_badarg(env);
+            goto ERR;
+        }
 
-
-NEXT:
         hints = tail;
     }
 
