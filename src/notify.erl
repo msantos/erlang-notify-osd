@@ -32,7 +32,7 @@
 
 -export([
         osd/1, urgency/1,
-        privdir/1,
+        privdir/1, icon/0,
         notify/7
     ]).
 

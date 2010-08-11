@@ -35,6 +35,7 @@
 
 -record(state, {
         feed,           % URL
+        icon,
         poll = 1,       % minutes
         number = 5      % number of RSS entries
     }).
@@ -47,10 +48,10 @@ start(Cfg) ->
     State = parse(notify:privdir(Cfg)),
     spawn(fun() -> loop(State, []) end).
 
-loop(#state{feed = Feed, poll = Poll, number = N} = State, Digest) ->
+loop(#state{feed = Feed, poll = Poll, number = N, icon = Icon} = State, Digest) ->
     RSS = lists:sublist(retrieve(Feed), N),
     Display = match(RSS, Digest),
-    [ notify:osd([{summary, S},{body, B}]) || {S,B} <- Display ],
+    [ notify:osd([{summary, S},{body, B},{icon, Icon}]) || {S,B} <- Display ],
     timer:sleep(timer:minutes(Poll)),
     loop(State, erlang:phash2(hd(RSS))).
 
@@ -113,6 +114,7 @@ parse(File) ->
     #state{
         feed = proplists:get_value(feed, Config),
         poll = proplists:get_value(poll, Config, #state.poll),
-        number = proplists:get_value(number, Config, #state.number)
+        number = proplists:get_value(number, Config, #state.number),
+        icon = proplists:get_value(icon, Config, notify:icon())
     }.
 
