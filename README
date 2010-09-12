@@ -1,6 +1,9 @@
 
 An Erlang NIF interface to the libnotify library. libnotify is used to
-send desktop notification bubbles.
+send desktop notification bubbles. See:
+
+https://wiki.ubuntu.com/NotifyOSD
+
 
 HOW TO BUILD IT
 
