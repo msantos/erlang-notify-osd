@@ -1,39 +1,20 @@
 
-ERL=erl
-APP=notify
+REBAR=$(shell which rebar || echo ./rebar)
+TEMPLATE=rebar.config.tmpl
+CONFIG=rebar.config
 
-CC=gcc
+CFLAGS=$(shell pkg-config --cflags libnotify)
+LDFLAGS=$(shell pkg-config --libs libnotify)
 
-# Use "-m64" for 64-bit Erlang installs
-ARCH=-m32
+all: config compile
 
-# Mac OS X
-#FLAGS=$(ARCH) -O3 -fPIC -bundle -flat_namespace -undefined suppress -fno-common
+config:
+	@sed -e 's:@LDFLAGS@:$(LDFLAGS):' -e 's:@CFLAGS@:$(CFLAGS):' $(TEMPLATE) > $(CONFIG)
 
-# Linux
-FLAGS=-fPIC -shared
-
-ERL_ROOT=/usr/local/lib/erlang
-CFLAGS=-g -Wall
-
-LIB=$(shell pkg-config --libs --cflags libnotify)
-
-all: dir erl nif
-
-dir:
-	-@mkdir -p ebin
-
-erl:
-	@$(ERL) -noinput +B \
-		-eval 'case make:all() of up_to_date -> halt(0); error -> halt(1) end.'
-
-nif:
-	(cd c_src && \
-	$(CC) $(ARCH) -g -Wall $(LIB) $(FLAGS) -o ../priv/notify.so  \
-		notify.c -I $(ERL_ROOT)/usr/include/ )
-
+compile:
+	$(REBAR) compile
 
 clean:  
-	@rm -fv ebin/*.beam priv/$(APP) priv/$(APP).so c_src/*.a c_src/*.o
+	@$(REBAR) clean
 
 
