@@ -8,13 +8,19 @@ LDFLAGS=$(shell pkg-config --libs libnotify)
 
 all: config compile
 
+./rebar:
+	erl -noshell -s inets start \
+		-eval 'httpc:request(get, {"http://hg.basho.com/rebar/downloads/rebar", []}, [], [{stream, "./rebar"}])' \
+		-s init stop
+	chmod +x ./rebar
+
 config:
 	@sed -e 's:@LDFLAGS@:$(LDFLAGS):' -e 's:@CFLAGS@:$(CFLAGS):' $(TEMPLATE) > $(CONFIG)
 
-compile:
+compile: $(REBAR)
 	$(REBAR) compile
 
-clean:  
+clean: $(REBAR)
 	@$(REBAR) clean
 
 
