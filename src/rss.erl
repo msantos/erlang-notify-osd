@@ -44,6 +44,7 @@
 start() ->
     start("rss.cfg").
 start(Cfg) ->
+    ssl:start(),
     inets:start(),
     State = parse(notify:privdir(Cfg)),
     spawn(fun() -> loop(State, []) end).
