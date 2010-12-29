@@ -9,7 +9,7 @@ https://wiki.ubuntu.com/NotifyOSD
 
 ## Default Notification
 
-![Default Notification](http://ubuntuone.com/p/VlU/)
+<img alt="Default Notification" src="http://ubuntuone.com/p/VlU/" width="317" height="81" />
 
 ## Using a libnotify icon
 
@@ -21,11 +21,11 @@ Then:
 
     > notify:osd([{icon, "notification-gpm-phone-020"}]).
 
-![Setting an Icon](http://ubuntuone.com/p/VlV/)
+<img alt="Setting an Icon" src="http://ubuntuone.com/p/VlV/" width="333" height="88" />
 
 ## RSS Feed
 
-![RSS Feed](http://ubuntuone.com/p/Vla/)
+<img alt="Setting an Icon" src="http://ubuntuone.com/p/Vla/" />
 
 
 # HOW TO BUILD IT
