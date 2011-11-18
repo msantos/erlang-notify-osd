@@ -1,4 +1,3 @@
-
 An Erlang NIF interface to the libnotify library. libnotify is used to
 send desktop notification bubbles. See:
 
@@ -58,6 +57,3 @@ Then:
     > rss:start().
 
 # TODO
-
-* support growl on Mac OS X
-
