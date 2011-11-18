@@ -1,4 +1,4 @@
-/* Copyright (c) 2010, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2010-2011, Michael Santos <michael.santos@gmail.com>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ int notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL
     static int
 load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
 {
-    char buf[1024];
+    char buf[1024] = {0};
 
     if (enif_get_string(env, load_info, buf, sizeof(buf), ERL_NIF_LATIN1) < 1)
         return (-1);
@@ -190,14 +190,14 @@ ERR:
     int
 notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF_TERM key, ERL_NIF_TERM value)
 {
-    char s_key[1024];
+    char s_key[1024] = {0};
 
-    char s_value[1024];
+    char s_value[1024] = {0};
     int i_value = 0;
     double d_value = 0;
 
-    const ERL_NIF_TERM *byte;
-    char s_byte[256];
+    const ERL_NIF_TERM *byte = NULL;
+    char s_byte[256] = {0};
     int len = 0;
 
 
@@ -252,5 +252,3 @@ static ErlNifFunc nif_funcs[] = {
 };
 
 ERL_NIF_INIT(notify, nif_funcs, load, NULL, NULL, unload)
-
-
