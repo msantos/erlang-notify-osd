@@ -133,7 +133,7 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     }
 
 
-    notify = notify_notification_new(s_summary, s_body, s_icon, NULL);
+    notify = notify_notification_new(s_summary, s_body, s_icon);
 
     notify_notification_set_category(notify, s_category);
     notify_notification_set_urgency(notify, urgency);
