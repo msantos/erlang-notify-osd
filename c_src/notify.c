@@ -128,7 +128,7 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
     if ( (s_summary == NULL) || (s_body == NULL) ||
             (s_icon == NULL) || (s_category == NULL)) {
-        rv = atom_nomem;
+        rv = enif_make_tuple2(env, atom_error, atom_nomem);
         goto ERR;
     }
 

@@ -34,7 +34,7 @@ Then:
 
 # HOW TO USE IT
 
-    osd(Options) -> ok | enomem
+    osd(Options) -> ok | {error,enomem}
         Types   Options = [Opt]
                 Opt = [{summary, string()}, {body, string()}, {icon, string()},
                         {category, string()}, {urgency, int()}, {timeout, int()},
