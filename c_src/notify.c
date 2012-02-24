@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2011, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2010-2012, Michael Santos <michael.santos@gmail.com>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -51,17 +51,17 @@ load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
     char buf[1024] = {0};
 
     if (enif_get_string(env, load_info, buf, sizeof(buf), ERL_NIF_LATIN1) < 1)
-        return (-1);
+        return -1;
 
     if (!notify_init(buf))
-        return (-1);
+        return -1;
 
     atom_ok = enif_make_atom(env, "ok");
     atom_error = enif_make_atom(env, "error");
     atom_nomem = enif_make_atom(env, "enomem");
     atom_undefined = enif_make_atom(env, "undefined");
 
-    return (0);
+    return 0;
 }
 
     void
@@ -202,7 +202,7 @@ notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF
 
 
     if (!enif_get_string(env, key, s_key, sizeof(s_key), ERL_NIF_LATIN1))
-        return (-1);
+        return -1;
 
     if (enif_get_int(env, value, &i_value))
         notify_notification_set_hint_int32(notify, s_key, (value == atom_undefined ? 0 : i_value));
@@ -213,15 +213,15 @@ notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF
                 !enif_get_atom(env, byte[0], s_byte, sizeof(s_byte), ERL_NIF_LATIN1) || 
                 (strcmp(s_byte, "byte") != 0) ||
                 !enif_get_int(env, byte[1], &i_value))
-            return (-1);
+            return -1;
         notify_notification_set_hint_byte(notify, s_key, (value == atom_undefined ? 0 : (u_int8_t)i_value));
     }
     else if ((arity == 0) || enif_get_string(env, value, s_value, sizeof(s_value), ERL_NIF_LATIN1))
         notify_notification_set_hint_string(notify, s_key, (value == atom_undefined ? "" : s_value));
     else
-        return (-1);
+        return -1;
 
-    return (0);
+    return 0;
 }
 
 
@@ -232,10 +232,10 @@ stralloc(ErlNifBinary *bin)
 
     str = (gchar *)calloc(bin->size+1, sizeof(gchar));
     if (str == NULL)
-        return (NULL);
+        return NULL;
 
     (void)memcpy(str, bin->data, bin->size);
-    return (str);
+    return str;
 }
 
 
