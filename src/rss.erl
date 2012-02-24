@@ -1,4 +1,4 @@
-%% Copyright (c) 2010-2011, Michael Santos <michael.santos@gmail.com>
+%% Copyright (c) 2010-2012, Michael Santos <michael.santos@gmail.com>
 %% All rights reserved.
 %% 
 %% Redistribution and use in source and binary forms, with or without
@@ -85,7 +85,7 @@ getElementsByTagName([H|T], Item) when H#xmlElement.name == Item ->
     [H|getElementsByTagName(T, Item)];
 getElementsByTagName([H|T], Item) when is_record(H, xmlElement) ->
     getElementsByTagName(H#xmlElement.content, Item) ++
-    getElementsByTagName(T, Item);                                                                  
+    getElementsByTagName(T, Item);
 getElementsByTagName(X, Item) when is_record(X, xmlElement) ->
     getElementsByTagName(X#xmlElement.content, Item);
 getElementsByTagName([_|T], Item) ->
@@ -112,9 +112,10 @@ textOf(Item) ->
 
 parse(File) ->
     {ok, [Config]} = file:consult(File),
+    Default = #state{},
     #state{
         feed = proplists:get_value(feed, Config),
-        poll = proplists:get_value(poll, Config, #state.poll),
-        number = proplists:get_value(number, Config, #state.number),
+        poll = proplists:get_value(poll, Config, Default#state.poll),
+        number = proplists:get_value(number, Config, Default#state.number),
         icon = proplists:get_value(icon, Config, notify:icon())
     }.
