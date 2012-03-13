@@ -1,5 +1,8 @@
-{so_name, "notify.so"}.
-{port_envs, [
+{port_specs, [
+    {"priv/notify.so", ["c_src/notify.c"]}
+    ]}.
+
+{port_env, [
     {"LDFLAGS", "$LDFLAGS @LDFLAGS@"},
     {"CFLAGS", "$CFLAGS @CFLAGS@"}
     ]}.
