@@ -52,7 +52,7 @@ on_load() ->
     erlang:load_nif(niflib(), ?NOTIFY_NAME).
 
 notify(_,_,_,_,_,_,_) ->
-    erlang:error(not_implemented).
+    erlang:nif_error(not_implemented).
 
 osd(Opt) when is_list(Opt) ->
     Summary = proplists:get_value(summary, Opt, ?NOTIFY_SUMMARY),
