@@ -55,5 +55,3 @@ Then:
             {body, ""}]).
     
     > rss:start().
-
-# TODO
