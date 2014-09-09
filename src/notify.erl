@@ -47,13 +47,30 @@
 
 -on_load(on_load/0).
 
-
 on_load() ->
     erlang:load_nif(niflib(), ?NOTIFY_NAME).
 
 notify(_,_,_,_,_,_,_) ->
     erlang:nif_error(not_implemented).
 
+-type osd_hints() ::
+    atom() |
+    {atom(), integer()} |
+    {atom(), float()} |
+    {atom(), {'byte', byte()}} |
+    {atom(), iodata()}.
+
+-type osd_opts() ::
+    {'summary',iodata()} |
+    {'body',iodata()} |
+    {'icon',iodata()} |
+    {'category',iodata()} |
+    {'urgency',integer()} |
+    {'timeout',integer()} |
+    {'hints',[osd_hints()]}.
+
+-spec osd(Opt) -> ok | {error,enomem} when
+    Opt :: [osd_opts()].
 osd(Opt) when is_list(Opt) ->
     Summary = proplists:get_value(summary, Opt, ?NOTIFY_SUMMARY),
     Body = proplists:get_value(body, Opt, ?NOTIFY_BODY),

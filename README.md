@@ -36,12 +36,12 @@ Then:
 
     osd(Options) -> ok | {error,enomem}
         Types   Options = [Opt]
-                Opt = [{summary, string()}, {body, string()}, {icon, string()},
-                        {category, string()}, {urgency, int()}, {timeout, int()},
-                        Hints]
-                Hints = [string() | {string(), Value}]
-                Value = [string() | integer() | double() | Byte]
-                Byte = {byte, uchar()}
+                Opt = [{summary, iodata()}, {body, iodata()}, {icon, iodata()},
+                        {category, iodata()}, {urgency, integer()},
+                        {timeout, integer()}, Hints]
+                Hints = [atom() | {atom(), Value}]
+                Value = [iodata() | integer() | float() | Byte]
+                Byte = {byte, byte()}
 
 
 # EXAMPLES
@@ -50,7 +50,7 @@ Then:
     > notify:osd([{summary, "hello"}, {body, "world"}]).
     
     > notify:osd([{icon, "notification-audio-volume-medium"},
-            {hints, [{"value", 75}, "x-canonical-private-synchronous"]},
+            {hints, [{value, 75}, 'x-canonical-private-synchronous']},
             {summary, "Volume"},
             {body, ""}]).
     

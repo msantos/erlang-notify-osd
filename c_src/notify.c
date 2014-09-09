@@ -142,7 +142,6 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
         ERL_NIF_TERM key;
         ERL_NIF_TERM value = atom_undefined;
 
-
         if (enif_get_tuple(env, head, &arity, &array)) {
             switch (arity) {
                 case 2:
@@ -154,7 +153,7 @@ nif_notify(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
                     goto ERR;
             }
         }
-        else if (enif_is_list(env, head)) {
+        else if (enif_is_atom(env, head)) {
             arity = 0;
             key = head;
         }
@@ -189,9 +188,9 @@ ERR:
     int
 notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF_TERM key, ERL_NIF_TERM value)
 {
-    char s_key[1024] = {0};
+    char s_key[256] = {0};
 
-    char s_value[1024] = {0};
+    ErlNifBinary s_value;
     int i_value = 0;
     double d_value = 0;
 
@@ -199,23 +198,32 @@ notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF
     char s_byte[256] = {0};
     int len = 0;
 
-    if (!enif_get_string(env, key, s_key, sizeof(s_key), ERL_NIF_LATIN1))
+    if (!enif_get_atom(env, key, s_key, sizeof(s_key), ERL_NIF_LATIN1))
         return -1;
 
     if (enif_get_int(env, value, &i_value))
-        notify_notification_set_hint_int32(notify, s_key, (value == atom_undefined ? 0 : i_value));
+        notify_notification_set_hint_int32(notify, s_key, i_value);
     else if (enif_get_double(env, value, &d_value))
-        notify_notification_set_hint_double(notify, s_key, (value == atom_undefined ? 0 : d_value));
+        notify_notification_set_hint_double(notify, s_key, d_value);
     else if (enif_get_tuple(env, value, &len, &byte)) {
-        if ( (len != 2) ||
+        if (len != 2 ||
                 !enif_get_atom(env, byte[0], s_byte, sizeof(s_byte), ERL_NIF_LATIN1) ||
                 (strcmp(s_byte, "byte") != 0) ||
                 !enif_get_int(env, byte[1], &i_value))
             return -1;
-        notify_notification_set_hint_byte(notify, s_key, (value == atom_undefined ? 0 : (u_int8_t)i_value));
+        notify_notification_set_hint_byte(notify, s_key, (u_int8_t)i_value);
     }
-    else if ((arity == 0) || enif_get_string(env, value, s_value, sizeof(s_value), ERL_NIF_LATIN1))
-        notify_notification_set_hint_string(notify, s_key, (value == atom_undefined ? "" : s_value));
+    else if (arity == 0 || enif_inspect_iolist_as_binary(env, value, &s_value)) {
+        gchar *tmpstr = NULL;
+
+        if (arity > 0)
+            tmpstr = stralloc(&s_value);
+
+        notify_notification_set_hint_string(notify, s_key,
+                (arity > 0 ? "" : tmpstr));
+
+        strfree(tmpstr);
+    }
     else
         return -1;
 
@@ -228,7 +236,7 @@ stralloc(ErlNifBinary *bin)
 {
     gchar *str = NULL;
 
-    str = (gchar *)calloc(bin->size+1, sizeof(gchar));
+    str = calloc(bin->size+1, sizeof(gchar));
     if (str == NULL)
         return NULL;
 
