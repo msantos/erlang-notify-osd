@@ -188,38 +188,40 @@ ERR:
     int
 notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF_TERM key, ERL_NIF_TERM value)
 {
-    char s_key[256] = {0};
+    char a_key[256] = {0};
 
-    ErlNifBinary s_value;
-    int i_value = 0;
-    double d_value = 0;
+    union {
+        ErlNifBinary b;
+        int i;
+        double d;
+    } val;
 
     const ERL_NIF_TERM *byte = NULL;
-    char s_byte[256] = {0};
+    char a_byte[256] = {0};
     int len = 0;
 
-    if (!enif_get_atom(env, key, s_key, sizeof(s_key), ERL_NIF_LATIN1))
+    if (!enif_get_atom(env, key, a_key, sizeof(a_key), ERL_NIF_LATIN1))
         return -1;
 
-    if (enif_get_int(env, value, &i_value))
-        notify_notification_set_hint_int32(notify, s_key, i_value);
-    else if (enif_get_double(env, value, &d_value))
-        notify_notification_set_hint_double(notify, s_key, d_value);
+    if (enif_get_int(env, value, &val.i))
+        notify_notification_set_hint_int32(notify, a_key, val.i);
+    else if (enif_get_double(env, value, &val.d))
+        notify_notification_set_hint_double(notify, a_key, val.d);
     else if (enif_get_tuple(env, value, &len, &byte)) {
         if (len != 2 ||
-                !enif_get_atom(env, byte[0], s_byte, sizeof(s_byte), ERL_NIF_LATIN1) ||
-                (strcmp(s_byte, "byte") != 0) ||
-                !enif_get_int(env, byte[1], &i_value))
+                !enif_get_atom(env, byte[0], a_byte, sizeof(a_byte), ERL_NIF_LATIN1) ||
+                (strcmp(a_byte, "byte") != 0) ||
+                !enif_get_int(env, byte[1], &val.i))
             return -1;
-        notify_notification_set_hint_byte(notify, s_key, (u_int8_t)i_value);
+        notify_notification_set_hint_byte(notify, a_key, (u_int8_t)val.i);
     }
-    else if (arity == 0 || enif_inspect_iolist_as_binary(env, value, &s_value)) {
+    else if (arity == 0 || enif_inspect_iolist_as_binary(env, value, &val.b)) {
         gchar *tmpstr = NULL;
 
         if (arity > 0)
-            tmpstr = stralloc(&s_value);
+            tmpstr = stralloc(&val.b);
 
-        notify_notification_set_hint_string(notify, s_key,
+        notify_notification_set_hint_string(notify, a_key,
                 (arity > 0 ? "" : tmpstr));
 
         strfree(tmpstr);
