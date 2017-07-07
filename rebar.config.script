@@ -1,0 +1,48 @@
+PkgConfig = fun(Flag, Pkg) ->
+    Cmd = erlang:open_port(
+			{spawn, ["pkg-config --silence-errors ", "--", Flag, " ", Pkg]},
+            [stream, exit_status]
+	),
+    true = receive
+        {Cmd, {exit_status, 0}} ->
+            true;
+        {Cmd, {exit_status, _}} ->
+			false
+    end,
+	Var = receive
+		{Cmd, {data, Data}} ->
+			Data
+	end,
+    string:strip(Var, right, $\n)
+end,
+
+Append = fun(Str, Flag) ->
+    string:join(sets:to_list(sets:add_element(Flag,
+                    sets:from_list(string:tokens(Str, " ")))), " ")
+end,
+
+Setenv = fun(_Key, "") ->
+                true;
+            (Key, Val) ->
+                Cur = os:getenv(Key, ""),
+                os:putenv(Key, Append(Cur, Val))
+end,
+
+Cflags = fun(Config) ->
+    Flag = PkgConfig("cflags", "libnotify"),
+    true = Setenv("CFLAGS", Flag),
+    Config
+end,
+
+Ldflags = fun(Config) ->
+    Flag = PkgConfig("libs", "libnotify"),
+    true = Setenv("LDFLAGS", Flag),
+    Config
+end,
+
+lists:foldl(fun(Fun, Cfg) ->
+        Fun(Cfg)
+    end,
+    CONFIG,
+    [Cflags, Ldflags]
+).
