@@ -30,7 +30,7 @@ Then:
 # HOW TO BUILD IT
 
     sudo apt-get install libnotify-dev
-    make
+    rebar3 compile
 
 # HOW TO USE IT
 
