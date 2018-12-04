@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2014, Michael Santos <michael.santos@gmail.com>
+/* Copyright (c) 2010-2018, Michael Santos <michael.santos@gmail.com>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,6 @@ static ERL_NIF_TERM atom_nomem;
 static ERL_NIF_TERM atom_undefined;
 
 static gchar *stralloc(ErlNifBinary *bin);
-void strfree(gchar *p);
 int notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF_TERM key, ERL_NIF_TERM value);
 
 
@@ -176,10 +175,10 @@ ERR:
     if (notify)
         g_object_unref(G_OBJECT(notify));
 
-    strfree(s_summary);
-    strfree(s_body);
-    strfree(s_icon);
-    strfree(s_category);
+    free(s_summary);
+    free(s_body);
+    free(s_icon);
+    free(s_category);
 
     return rv;
 }
@@ -224,7 +223,7 @@ notify_hints_type(ErlNifEnv *env, NotifyNotification *notify, int arity, ERL_NIF
         notify_notification_set_hint_string(notify, a_key,
                 (arity > 0 ? "" : tmpstr));
 
-        strfree(tmpstr);
+        free(tmpstr);
     }
     else
         return -1;
@@ -245,15 +244,6 @@ stralloc(ErlNifBinary *bin)
     (void)memcpy(str, bin->data, bin->size);
     return str;
 }
-
-
-    void
-strfree(gchar *p)
-{
-    if (p)
-        free(p);
-}
-
 
 static ErlNifFunc nif_funcs[] = {
     {"notify", 7, nif_notify}
